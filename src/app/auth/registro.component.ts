@@ -4,6 +4,8 @@ import { AuthService } from '../service/auth.service';
 import { Router } from '@angular/router';
 import { NuevoUsuario } from '../models/nuevo-usuario';
 import { ToastrService } from 'ngx-toastr';
+import { EmpresaService } from '../service/empresa.service';
+import { Empresa } from '../models/empresa';
 
 @Component({
   selector: 'app-registro',
@@ -17,6 +19,7 @@ export class RegistroComponent implements OnInit {
   nombreUsuario: string;
   email: string;
   password: string;
+  empresas: Empresa [];
   errMsj: string;
   isLogged = false;
 
@@ -24,17 +27,20 @@ export class RegistroComponent implements OnInit {
     private tokenService: TokenService,
     private authService: AuthService,
     private router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private empresaService: EmpresaService
   ) { }
 
   ngOnInit() {
+
+    this.cargarEmpresas();
     if (this.tokenService.getToken()) {
       this.isLogged = true;
     }
   }
 
   onRegister(): void {
-    this.nuevoUsuario = new NuevoUsuario(this.nombre, this.nombreUsuario, this.email, this.password);
+    this.nuevoUsuario = new NuevoUsuario(this.nombre, this.nombreUsuario, this.email, this.password );
     this.authService.nuevo(this.nuevoUsuario).subscribe(
       data => {
         this.toastr.success('Cuenta Creada', 'OK', {
@@ -49,6 +55,19 @@ export class RegistroComponent implements OnInit {
           timeOut: 3000,  positionClass: 'toast-top-center',
         });
         // console.log(err.error.message);
+      }
+    );
+  }
+
+  cargarEmpresas(): void {
+    this.empresaService.lista().subscribe(
+      data => {
+        console.log(data);
+        this.empresas = data;
+      
+      },
+      err => {
+        console.log(err);
       }
     );
   }

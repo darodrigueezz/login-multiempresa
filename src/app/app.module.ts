@@ -19,6 +19,7 @@ import { LoginComponent } from './auth/login.component';
 import { RegistroComponent } from './auth/registro.component';
 import { MenuComponent } from './menu/menu.component';
 import { IndexComponent } from './index/index.component';
+import { EmpresaComponent } from './empresa/empresa.component';
 
 
 
@@ -32,7 +33,8 @@ import { IndexComponent } from './index/index.component';
     LoginComponent,
     RegistroComponent,
     MenuComponent,
-    IndexComponent
+    IndexComponent,
+    EmpresaComponent
   ],
   imports: [
     BrowserModule,

@@ -34,6 +34,7 @@ export class ListaProductoComponent implements OnInit {
   cargarProductos(): void {
     this.productoService.lista().subscribe(
       data => {
+        console.log(data);
         this.productos = data;
       },
       err => {

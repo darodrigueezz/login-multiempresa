@@ -4,6 +4,9 @@ import { Router } from '@angular/router';
 import { LoginUsuario } from '../models/login-usuario';
 import { TokenService } from '../service/token.service';
 import { ToastrService } from 'ngx-toastr';
+import { EmpresaService } from '../service/empresa.service';
+import { Empresa } from '../models/empresa';
+import { ListaProductoComponent } from '../producto/lista-producto.component';
 
 @Component({
   selector: 'app-login',
@@ -19,20 +22,39 @@ export class LoginComponent implements OnInit {
   password: string;
   roles: string[] = [];
   errMsj: string;
+  empresas: Empresa [];
 
   constructor(
     private tokenService: TokenService,
     private authService: AuthService,
     private router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private empresaService: EmpresaService
   ) { }
 
+
   ngOnInit() {
+    this.cargarEmpresas();
     if (this.tokenService.getToken()) {
       this.isLogged = true;
       this.isLoginFail = false;
       this.roles = this.tokenService.getAuthorities();
+      
     }
+    
+  }
+
+  cargarEmpresas(): void {
+    this.empresaService.lista().subscribe(
+      data => {
+        console.log(data);
+        this.empresas = data;
+      
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   onLogin(): void {
@@ -40,14 +62,17 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.loginUsuario).subscribe(
       data => {
         this.isLogged = true;
-
+        
         this.tokenService.setToken(data.token);
         this.tokenService.setUserName(data.nombreUsuario);
+        
         this.tokenService.setAuthorities(data.authorities);
         this.roles = data.authorities;
+        
         this.toastr.success('Bienvenido ' + data.nombreUsuario, 'OK', {
           timeOut: 3000, positionClass: 'toast-top-center'
         });
+        
         this.router.navigate(['/']);
       },
       err => {
